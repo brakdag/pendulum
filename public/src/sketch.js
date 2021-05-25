@@ -22,24 +22,20 @@ function sc(sx){
 	return sx * 500/4.4
 }
 
-
 function draw() {
-	if (keyIsDown(LEFT_ARROW)) {x -= 0.1;}
-  	if (keyIsDown(RIGHT_ARROW)) { x += 0.1;}
+	if (keyIsDown(LEFT_ARROW)) {x += 2;}
+  	if (keyIsDown(RIGHT_ARROW)) { x -= 2;}
+	
 	//fondo
 	fill(backgroundcolor);
   	rect(0, 0, 500, 500);
-  	//x = slider.value()
-	//console.log(obs)
-
-	let result=env.step(x)
-
+  	let result=env.step(x)
+	
 	textSize(12);
 	fill(0, 102, 153);
 	text(`State:${result.observation}`, 5, 15);
 	text(`Costs:${result.costs}`, 5, 35);
-
-	
+	text(`U:${x}`, 5, 55);
 	
 	translate(width / 2+sc(.2)/2, height / 2+sc(.2)/2);
 	rotate(env.state.theta -Math.PI/2)
@@ -48,11 +44,10 @@ function draw() {
 	rect(0, 0, sc(1), sc(.2),sc(.2));
 	translate(+sc(.2)/2, +sc(.2)/2);
 	fill(0,0,0)
-	circle(0,0,sc(0.05))
-	
-	scale(x,x);
+	circle(0,0,sc(0.05))	
+	scale(env.last_u,abs(env.last_u));
 	image(img,-50,-50,100,100)
-	
+	x=0
 	
 }
   
