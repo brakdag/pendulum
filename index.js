@@ -1,7 +1,6 @@
-var express = require("express")
-var app = express();
-
+const express = require("express")
+const app = express();
+const PORT = 3000;
 app.use('/', express.static(__dirname + '/public'));
-//app.use('assets', express.static(__dirname + '/public/assets'));
-
-app.listen(3000);
+console.log(`listen in port ${PORT}`)
+app.listen(PORT);

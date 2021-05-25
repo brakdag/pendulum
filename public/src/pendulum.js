@@ -1,10 +1,11 @@
 class PendulumEnv {
 	constructor(){
+		this.steps=0
 		this.viewer = {"width":500,"height":500,}
 		this.frame_rate=30
 		this.max_speed = 8
         this.max_torque = 2.
-        this.dt = .05
+        this.dt = 1/this.frame_rate
         this.g = 10
         this.m = 1.
         this.l = 1.
@@ -17,6 +18,7 @@ class PendulumEnv {
 		return 0
 	}
 	step(u){
+		this.steps++;
 		let th = this.state.theta  // th := theta
 		let thdot = this.state.thetadot
         let g = this.g
@@ -35,26 +37,19 @@ class PendulumEnv {
 
         this.state.theta = newth
         this.state.thetadot = newthdot
-        return {observation:this._get_obs(),costs:-costs,end:false}
+        this.done = this.steps>400?1:0
+        return {observation:this._get_obs(),costs:-costs,done:this.done}
 	}
 
 	reset(){
+		this.steps=0
 		this.state = {"theta":Math.random()*2*Math.PI-Math.PI,"thetadot":Math.random()*2-1}
         this.last_u = 0
         return this._get_obs()
 	}
-
 	_get_obs(){
         return [Math.cos(this.state.theta), Math.sin(this.state.theta), this.state.thetadot]
 	} //OK
-
-	render(){
-
-	}
-
-	close(){
-
-	}
 
 	angle_normalize(x){
 		return (((x+Math.PI) % (2*Math.PI)) - Math.PI)
