@@ -37,7 +37,7 @@ class PendulumEnv {
 
         this.state.theta = newth
         this.state.thetadot = newthdot
-        this.done = this.steps>400?1:0
+        this.done = this.steps>200?1:0
         return {observation:this._get_obs(),costs:-costs,done:this.done}
 	}
 
@@ -50,6 +50,20 @@ class PendulumEnv {
 	_get_obs(){
         return [Math.cos(this.state.theta), Math.sin(this.state.theta), this.state.thetadot]
 	} //OK
+
+	draw(img,w,h){
+		function sc(sx){return sx * 500/4.4}
+		translate(w / 2+sc(.2)/2, h / 2+sc(.2)/2);
+		rotate(this.state.theta -Math.PI/2)
+		translate(-sc(.2)/2, -sc(.2)/2);
+		fill('rgb(80%,30%,30%)')	
+		rect(0, 0, sc(1), sc(.2),sc(.2));
+		translate(+sc(.2)/2, +sc(.2)/2);
+		fill(0,0,0)
+		circle(0,0,sc(0.05))	
+		scale(this.last_u,Math.abs(this.last_u));
+		image(img,-15,-15,30,30) 
+	}
 
 	angle_normalize(x){
 		return (((x+Math.PI) % (2*Math.PI)) - Math.PI)

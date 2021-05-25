@@ -1,13 +1,11 @@
 var env
 var sim
 var obs
-var backgroundcolor=220
-let img
-var x=0
-var result
 
 function preload(){
 	img = loadImage('./assets/clockwise.png')
+	fondo = loadImage('./assets/wallpaper.jpg')
+	fuente = loadFont('./assets/VCR_OSD_MONO.ttf')
 }
 
 
@@ -16,70 +14,49 @@ function setup() {
 	sim = new Simulation()
 	createCanvas(env.viewer.width, env.viewer.height);	
 	frameRate(env.frame_rate)
-	background(backgroundcolor)
 	obs=env.reset()
-	
 }
-
-function sc(sx){
-	return sx * 500/4.4
-}
-
 
 function draw() {
-	
-	fill(backgroundcolor);
-	rect(0, 0, 500, 500);	
-
+	textFont(fuente)	
+	let result
+	clear();
+	image(fondo,0,0,500,500)
 	switch(sim.state){
 		case 1: 
-		text(`Generation:${sim.generation}, Genoma: ${sim.genoma}, Score: ${sim.score}`, 5, 70);
-	  	result=sim.step(env,obs)
+			textSize(20);
+			fill(0, 0, 0);
+			text(`Score:${sim.score.toFixed(2)}, G${sim.generation},B:${sim.genoma}`, 5, 20);
 
+		case 3:
+		result=sim.step(env,obs)
+		
 		case 2: 
 			if (sim.state==2)
 			{
+				let x=0
 				if (keyIsDown(LEFT_ARROW)) {x += 2;}
 		  		if (keyIsDown(RIGHT_ARROW)) { x -= 2;}
 				result=env.step(x)
-				if (result.done==1){
-				 	env.reset()
-					console.log("done")
-				}
 			}
-				obs= result.observation
-			
-		//fondo
-		textSize(12);
-		fill(0, 102, 153);
-		text(`State:${result.observation}`, 5, 15);
-		text(`Costs:${result.costs}`, 5, 35);
-		text(`U:${env.last_u}`, 5, 55);
-		
-		translate(width / 2+sc(.2)/2, height / 2+sc(.2)/2);
-		rotate(env.state.theta -Math.PI/2)
-		translate(-sc(.2)/2, -sc(.2)/2);
-		fill('rgb(80%,30%,30%)')	
-		rect(0, 0, sc(1), sc(.2),sc(.2));
-		translate(+sc(.2)/2, +sc(.2)/2);
-		fill(0,0,0)
-		circle(0,0,sc(0.05))	
-		scale(env.last_u,abs(env.last_u));
-		image(img,-50,-50,100,100)
-		x=0; break;
-	case 0:       
-
-	fill(backgroundcolor)
-	rect(0,0,500,500)
-	textSize(12);
-	fill(0, 102, 153);
-	text(`Press [W] to real time training`, 5, 15);
-	text(`Press [M] to test manual Left and Rigth arrows for impulse`, 5, 35);
-	text(`Press [F] to fast trainging`, 5, 35);
-	text(`Press [T] to test genome`, 5, 35);
+			obs= result.observation
+			env.draw(img,width,height);
+			break;
+		case 0:       
+			textSize(38);
+			fill(0, 102, 153);
+			text(`PENDULUMENV JS`, 100, 200);
+			textSize(18);
+			text(`[W] REAL TIME TRAIN`, 25, 240);
+			text(`[M] MANUAL:LEFT OR RIGHT ARROW`, 25, 260);
+			text(`[F] FAST TRAIN`, 25, 280);
+			text(`[T] TEST ELITE GENOME.`, 25, 300);
 	
 	break;
 	case 4:
+		result=sim.step(env,obs)
+		obs= result.observation
+		env.draw(img,width,height)
 		//console.log("case4")
 	break;
 }
@@ -87,11 +64,14 @@ function draw() {
 }
   
 function keyPressed(){
-		console.log(keyCode)
+	//console.log(keyCode)
 	switch(keyCode){
 		case 87: sim.train(env,obs);break;
-		case 84: sim.test();break;
-		case 77: sim.menu();break
+		case 84: sim.test(env,obs);break;
+		case 77: sim.train(env,obs);sim.state=2;break
 		case 70: sim.fast_train(env,obs);break;
+		case 27: sim.state=0;break;
 	}
+
+
 }
