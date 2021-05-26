@@ -27,7 +27,6 @@ function draw() {
 			textSize(20);
 			fill(0, 0, 0);
 			text(`Score:${sim.score.toFixed(2)}, G${sim.generation},B:${sim.genoma}`, 5, 20);
-
 		case 3:
 		result=sim.step(env,obs)
 		
